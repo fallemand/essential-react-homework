@@ -9,7 +9,7 @@ Express + TypeScript API server with Redis storage.
 npm install
 ```
 
-2. Create `.env` file:
+2. Create `.env` file in the backend directory:
 ```bash
 REDIS_URL=your_redis_connection_string
 ```
