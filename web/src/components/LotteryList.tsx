@@ -8,7 +8,15 @@ import { LotteryCard } from './LotteryCard';
 import { getLotteries } from '../services/api';
 import type { Lottery } from '../types';
 
-export function LotteryList() {
+interface LotteryListProps {
+  selectedIds: string[];
+  onSelectionChange: (ids: string[]) => void;
+}
+
+export function LotteryList({
+  selectedIds,
+  onSelectionChange,
+}: LotteryListProps) {
   const [lotteries, setLotteries] = useState<Lottery[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +50,14 @@ export function LotteryList() {
       setError(err instanceof Error ? err.message : 'Failed to load lotteries');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleSelection = (id: string) => {
+    if (selectedIds.includes(id)) {
+      onSelectionChange(selectedIds.filter((selectedId) => selectedId !== id));
+    } else {
+      onSelectionChange([...selectedIds, id]);
     }
   };
 
@@ -108,6 +124,8 @@ export function LotteryList() {
             <LotteryCard
               key={lottery.id}
               lottery={lottery}
+              selected={selectedIds.includes(lottery.id)}
+              onSelect={handleToggleSelection}
               onRefresh={handleRefresh}
             />
           ))}
