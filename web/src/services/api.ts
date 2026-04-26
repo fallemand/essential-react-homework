@@ -37,3 +37,21 @@ export async function getLotteries(): Promise<Lottery[]> {
 
   return (await response.json()) as Lottery[];
 }
+
+export async function registerForLottery(
+  lotteryId: string,
+  name: string,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ lotteryId, name }),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json()) as ErrorResponse;
+    throw new Error(error.error || 'Failed to register for lottery');
+  }
+}

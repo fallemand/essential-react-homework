@@ -5,7 +5,7 @@ import { AddLotteryModal } from './components/AddLotteryModal';
 import { RegisterModal } from './components/RegisterModal';
 import { LotteryList } from './components/LotteryList';
 import { RegisterButton } from './components/RegisterButton';
-import { createLottery } from './services/api';
+import { createLottery, registerForLottery } from './services/api';
 
 function App() {
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -57,11 +57,9 @@ function App() {
     try {
       // Register for each selected lottery
       await Promise.all(
-        selectedLotteryIds.map(async (lotteryId) => {
-          // TODO: Call register API
-          console.log('Registering', name, 'for lottery', lotteryId);
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }),
+        selectedLotteryIds.map((lotteryId) =>
+          registerForLottery(lotteryId, name),
+        ),
       );
 
       handleRegisterModalClose();
