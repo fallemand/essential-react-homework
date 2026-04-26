@@ -6,18 +6,21 @@ import {
   TextField,
   Button,
   Box,
+  CircularProgress,
 } from '@mui/material';
 
 interface AddLotteryModalProps {
   open: boolean;
   onClose: () => void;
-  onAdd: (name: string, prize: string) => void;
+  onAdd: (name: string, prize: string) => void | Promise<void>;
+  loading?: boolean;
 }
 
 export function AddLotteryModal({
   open,
   onClose,
   onAdd,
+  loading = false,
 }: AddLotteryModalProps) {
   const [lotteryName, setLotteryName] = useState('');
   const [lotteryPrize, setLotteryPrize] = useState('');
@@ -35,7 +38,7 @@ export function AddLotteryModal({
 
   const handleAdd = () => {
     if (!isValid) return;
-    onAdd(lotteryName, lotteryPrize);
+    void onAdd(lotteryName, lotteryPrize);
     setLotteryName('');
     setLotteryPrize('');
   };
@@ -66,14 +69,15 @@ export function AddLotteryModal({
           <Button
             variant="contained"
             onClick={handleAdd}
-            disabled={!isValid}
+            disabled={!isValid || loading}
+            startIcon={loading ? <CircularProgress size={16} /> : null}
             sx={{
               alignSelf: 'flex-start',
               mt: 2,
               textTransform: 'uppercase',
             }}
           >
-            ADD
+            {loading ? 'ADDING...' : 'ADD'}
           </Button>
         </Box>
       </DialogContent>
