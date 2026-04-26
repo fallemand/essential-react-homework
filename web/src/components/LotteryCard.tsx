@@ -4,16 +4,27 @@ import type { Lottery } from '../types';
 
 interface LotteryCardProps {
   lottery: Lottery;
+  selected?: boolean;
+  onSelect?: (id: string) => void;
   onRefresh?: () => void | Promise<void>;
 }
 
-export function LotteryCard({ lottery, onRefresh }: LotteryCardProps) {
+export function LotteryCard({
+  lottery,
+  selected = false,
+  onSelect,
+  onRefresh,
+}: LotteryCardProps) {
   return (
     <Card
       variant="outlined"
+      onClick={() => onSelect?.(lottery.id)}
       sx={{
         height: '100%',
         position: 'relative',
+        cursor: onSelect ? 'pointer' : 'default',
+        borderColor: selected ? 'primary.main' : undefined,
+        borderWidth: selected ? 2 : 1,
         '&:hover': {
           boxShadow: 2,
         },

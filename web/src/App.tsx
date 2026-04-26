@@ -3,6 +3,7 @@ import { Snackbar, Alert } from '@mui/material';
 import { AddLotteryButton } from './components/AddLotteryButton';
 import { AddLotteryModal } from './components/AddLotteryModal';
 import { LotteryList } from './components/LotteryList';
+import { RegisterButton } from './components/RegisterButton';
 import { createLottery } from './services/api';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedLotteryIds, setSelectedLotteryIds] = useState<string[]>([]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -40,9 +42,22 @@ function App() {
     }
   };
 
+  const handleRegister = () => {
+    console.log('Register for lotteries:', selectedLotteryIds);
+    // TODO: Implement register modal
+  };
+
   return (
     <>
-      <LotteryList key={refreshKey} />
+      <LotteryList
+        key={refreshKey}
+        selectedIds={selectedLotteryIds}
+        onSelectionChange={setSelectedLotteryIds}
+      />
+      <RegisterButton
+        onClick={handleRegister}
+        disabled={selectedLotteryIds.length === 0}
+      />
       <AddLotteryButton onClick={handleOpen} />
       <AddLotteryModal
         open={open}
