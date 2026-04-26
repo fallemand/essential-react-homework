@@ -15,18 +15,23 @@ export function LotteryCard({
   onSelect,
   onRefresh,
 }: LotteryCardProps) {
+  const isFinished = lottery.status === 'finished';
+  const isSelectable = !isFinished && onSelect;
+
   return (
     <Card
       variant="outlined"
-      onClick={() => onSelect?.(lottery.id)}
+      onClick={() => isSelectable && onSelect(lottery.id)}
       sx={{
         height: '100%',
         position: 'relative',
-        cursor: onSelect ? 'pointer' : 'default',
+        cursor: isSelectable ? 'pointer' : 'default',
         borderColor: selected ? 'primary.main' : undefined,
         borderWidth: selected ? 2 : 1,
+        opacity: isFinished ? 0.5 : 1,
+        backgroundColor: isFinished ? 'action.disabledBackground' : undefined,
         '&:hover': {
-          boxShadow: 2,
+          boxShadow: isSelectable ? 2 : undefined,
         },
       }}
     >
@@ -37,7 +42,10 @@ export function LotteryCard({
           top: 8,
           right: 8,
         }}
-        onClick={() => void onRefresh?.()}
+        onClick={(e) => {
+          e.stopPropagation();
+          void onRefresh?.();
+        }}
       >
         <SyncIcon fontSize="small" />
       </IconButton>
