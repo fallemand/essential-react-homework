@@ -22,7 +22,19 @@ export function AddLotteryModal({
   const [lotteryName, setLotteryName] = useState('');
   const [lotteryPrize, setLotteryPrize] = useState('');
 
+  const nameError =
+    lotteryName.length > 0 && lotteryName.length < 4
+      ? 'name must be at least 4 characters'
+      : '';
+  const prizeError =
+    lotteryPrize.length > 0 && lotteryPrize.length < 4
+      ? 'prize must be at least 4 characters'
+      : '';
+
+  const isValid = lotteryName.length >= 4 && lotteryPrize.length >= 4;
+
   const handleAdd = () => {
+    if (!isValid) return;
     onAdd(lotteryName, lotteryPrize);
     setLotteryName('');
     setLotteryPrize('');
@@ -39,6 +51,8 @@ export function AddLotteryModal({
             fullWidth
             value={lotteryName}
             onChange={(e) => setLotteryName(e.target.value)}
+            error={!!nameError}
+            helperText={nameError}
           />
           <TextField
             label="Lottery prize"
@@ -46,10 +60,13 @@ export function AddLotteryModal({
             fullWidth
             value={lotteryPrize}
             onChange={(e) => setLotteryPrize(e.target.value)}
+            error={!!prizeError}
+            helperText={prizeError}
           />
           <Button
             variant="contained"
             onClick={handleAdd}
+            disabled={!isValid}
             sx={{
               alignSelf: 'flex-start',
               mt: 2,
