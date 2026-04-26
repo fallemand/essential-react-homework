@@ -26,3 +26,14 @@ export async function createLottery(
 
   return (await response.json()) as Lottery;
 }
+
+export async function getLotteries(): Promise<Lottery[]> {
+  const response = await fetch(`${API_URL}/lotteries`);
+
+  if (!response.ok) {
+    const error = (await response.json()) as ErrorResponse;
+    throw new Error(error.error || 'Failed to fetch lotteries');
+  }
+
+  return (await response.json()) as Lottery[];
+}

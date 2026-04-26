@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { AddLotteryButton } from './components/AddLotteryButton';
 import { AddLotteryModal } from './components/AddLotteryModal';
+import { LotteryList } from './components/LotteryList';
 import { createLottery } from './services/api';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -16,6 +18,10 @@ function App() {
     setSnackbarOpen(false);
     setError(null);
   };
+
+  const refreshLotteries = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
 
   const handleAdd = async (name: string, prize: string) => {
     setLoading(true);
@@ -25,6 +31,7 @@ function App() {
       await createLottery({ name, prize, type: 'simple' });
       handleClose();
       setSnackbarOpen(true);
+      refreshLotteries();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create lottery');
       setSnackbarOpen(true);
@@ -35,6 +42,7 @@ function App() {
 
   return (
     <>
+      <LotteryList key={refreshKey} />
       <AddLotteryButton onClick={handleOpen} />
       <AddLotteryModal
         open={open}
