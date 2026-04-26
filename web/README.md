@@ -14,11 +14,13 @@ React + TypeScript + Vite application with Material-UI.
 ## Setup
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Create `.env` file:
+
 ```bash
 VITE_API_URL=http://localhost:3000
 ```
