@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
-import { Casino as CasinoIcon } from '@mui/icons-material';
+import {
+  Casino as CasinoIcon,
+  SentimentDissatisfied as SadIcon,
+} from '@mui/icons-material';
 import { LotteryCard } from './LotteryCard';
 import { getLotteries } from '../services/api';
 import type { Lottery } from '../types';
@@ -42,29 +45,6 @@ export function LotteryList() {
     }
   };
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '400px',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography color="error">{error}</Typography>
-      </Container>
-    );
-  }
-
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 4 }}>
@@ -74,25 +54,65 @@ export function LotteryList() {
         <CasinoIcon sx={{ fontSize: 40 }} />
       </Box>
 
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
-          },
-          gap: 3,
-        }}
-      >
-        {lotteries.map((lottery) => (
-          <LotteryCard
-            key={lottery.id}
-            lottery={lottery}
-            onRefresh={handleRefresh}
-          />
-        ))}
-      </Box>
+      {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
+          }}
+        >
+          <CircularProgress size={60} />
+        </Box>
+      ) : error ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
+          }}
+        >
+          <Typography color="error">{error}</Typography>
+        </Box>
+      ) : lotteries.length === 0 ? (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '400px',
+            gap: 2,
+          }}
+        >
+          <SadIcon sx={{ fontSize: 60, color: 'text.secondary' }} />
+          <Typography variant="h6" color="text.secondary">
+            There are no lotteries currently
+          </Typography>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+            },
+            gap: 3,
+          }}
+        >
+          {lotteries.map((lottery) => (
+            <LotteryCard
+              key={lottery.id}
+              lottery={lottery}
+              onRefresh={handleRefresh}
+            />
+          ))}
+        </Box>
+      )}
     </Container>
   );
 }
