@@ -6,27 +6,18 @@ import { RegisterModal } from './components/RegisterModal';
 import { LotteryList } from './components/LotteryList';
 import { RegisterButton } from './components/RegisterButton';
 import { createLottery, registerForLottery } from './services/api';
+import { useModal } from './hooks/useModal';
+import { useNotification } from './hooks/useNotification';
 
 function App() {
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const addModal = useModal();
+  const registerModal = useModal();
+  const notification = useNotification();
+
   const [addLoading, setAddLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedLotteryIds, setSelectedLotteryIds] = useState<string[]>([]);
-
-  const handleAddModalOpen = () => setAddModalOpen(true);
-  const handleAddModalClose = () => setAddModalOpen(false);
-  const handleRegisterModalOpen = () => setRegisterModalOpen(true);
-  const handleRegisterModalClose = () => setRegisterModalOpen(false);
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-    setError(null);
-  };
 
   const refreshLotteries = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
@@ -34,17 +25,16 @@ function App() {
 
   const handleAdd = async (name: string, prize: string) => {
     setAddLoading(true);
-    setError(null);
 
     try {
       await createLottery({ name, prize, type: 'simple' });
-      handleAddModalClose();
-      setSnackbarMessage('New lottery created');
-      setSnackbarOpen(true);
+      addModal.handleClose();
+      notification.showSuccess('New lottery created');
       refreshLotteries();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create lottery');
-      setSnackbarOpen(true);
+      notification.showError(
+        err instanceof Error ? err.message : 'Failed to create lottery',
+      );
     } finally {
       setAddLoading(false);
     }
@@ -52,27 +42,23 @@ function App() {
 
   const handleRegisterSubmit = async (name: string) => {
     setRegisterLoading(true);
-    setError(null);
 
     try {
-      // Register for each selected lottery
       await Promise.all(
         selectedLotteryIds.map((lotteryId) =>
           registerForLottery(lotteryId, name),
         ),
       );
 
-      handleRegisterModalClose();
+      registerModal.handleClose();
       setSelectedLotteryIds([]);
-      setSnackbarMessage(
+      notification.showSuccess(
         `Successfully registered for ${selectedLotteryIds.length} ${selectedLotteryIds.length === 1 ? 'lottery' : 'lotteries'}`,
       );
-      setSnackbarOpen(true);
     } catch (err) {
-      setError(
+      notification.showError(
         err instanceof Error ? err.message : 'Failed to register for lottery',
       );
-      setSnackbarOpen(true);
     } finally {
       setRegisterLoading(false);
     }
@@ -86,37 +72,34 @@ function App() {
         onSelectionChange={setSelectedLotteryIds}
       />
       <RegisterButton
-        onClick={handleRegisterModalOpen}
+        onClick={registerModal.handleOpen}
         disabled={selectedLotteryIds.length === 0}
       />
-      <AddLotteryButton onClick={handleAddModalOpen} />
+      <AddLotteryButton onClick={addModal.handleOpen} />
       <AddLotteryModal
-        open={addModalOpen}
-        onClose={handleAddModalClose}
+        open={addModal.open}
+        onClose={addModal.handleClose}
         onAdd={handleAdd}
         loading={addLoading}
       />
       <RegisterModal
-        open={registerModalOpen}
-        onClose={handleRegisterModalClose}
+        open={registerModal.open}
+        onClose={registerModal.handleClose}
         onRegister={handleRegisterSubmit}
         loading={registerLoading}
       />
       <Snackbar
-        open={snackbarOpen}
+        open={notification.notification.open}
         autoHideDuration={3000}
-        onClose={handleSnackbarClose}
+        onClose={notification.handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        {error ? (
-          <Alert onClose={handleSnackbarClose} severity="error">
-            {error}
-          </Alert>
-        ) : (
-          <Alert onClose={handleSnackbarClose} severity="success">
-            {snackbarMessage}
-          </Alert>
-        )}
+        <Alert
+          onClose={notification.handleClose}
+          severity={notification.notification.severity}
+        >
+          {notification.notification.message}
+        </Alert>
       </Snackbar>
     </>
   );
