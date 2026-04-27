@@ -1,19 +1,16 @@
-import { useMemo, useState } from 'react';
-import {
-  Container,
-  Typography,
-  Box,
-  CircularProgress,
-  TextField,
-  InputAdornment,
-} from '@mui/material';
+import { useCallback } from 'react';
+import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import {
   Casino as CasinoIcon,
   SentimentDissatisfied as SadIcon,
   Search as SearchIcon,
 } from '@mui/icons-material';
 import { LotteryCard } from './LotteryCard';
+import { SearchInput } from './SearchInput';
+import { EmptyState } from './EmptyState';
+import { useSearch } from '../hooks/useSearch';
 import { useLotteries } from '../hooks/useLotteries';
+import type { Lottery } from '../types';
 
 interface LotteryListProps {
   selectedIds: string[];
@@ -25,7 +22,19 @@ export function LotteryList({
   onSelectionChange,
 }: LotteryListProps) {
   const { lotteries, loading, error, refresh } = useLotteries();
-  const [searchQuery, setSearchQuery] = useState('');
+
+  const filterLottery = useCallback((lottery: Lottery, query: string) => {
+    return (
+      lottery.name.toLowerCase().includes(query) ||
+      lottery.prize.toLowerCase().includes(query) ||
+      lottery.id.toLowerCase().includes(query)
+    );
+  }, []);
+
+  const { query, setQuery, filteredItems } = useSearch({
+    items: lotteries,
+    filterFn: filterLottery,
+  });
 
   const handleToggleSelection = (id: string) => {
     if (selectedIds.includes(id)) {
@@ -35,22 +44,8 @@ export function LotteryList({
     }
   };
 
-  const filteredLotteries = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return lotteries;
-    }
-
-    const query = searchQuery.toLowerCase();
-    return lotteries.filter(
-      (lottery) =>
-        lottery.name.toLowerCase().includes(query) ||
-        lottery.prize.toLowerCase().includes(query) ||
-        lottery.id.toLowerCase().includes(query),
-    );
-  }, [lotteries, searchQuery]);
-
   const hasLotteries = lotteries.length > 0;
-  const hasResults = filteredLotteries.length > 0;
+  const hasResults = filteredItems.length > 0;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -62,23 +57,11 @@ export function LotteryList({
       </Box>
 
       {hasLotteries && (
-        <Box sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
-          <TextField
-            fullWidth
-            placeholder="Search lotteries..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Box>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Search lotteries..."
+        />
       )}
 
       {loading ? (
@@ -104,40 +87,16 @@ export function LotteryList({
           <Typography color="error">{error}</Typography>
         </Box>
       ) : !hasLotteries ? (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '400px',
-            gap: 2,
-          }}
-        >
-          <SadIcon sx={{ fontSize: 60, color: 'text.secondary' }} />
-          <Typography variant="h6" color="text.secondary">
-            There are no lotteries currently
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<SadIcon sx={{ fontSize: 60, color: 'text.secondary' }} />}
+          title="There are no lotteries currently"
+        />
       ) : !hasResults ? (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '400px',
-            gap: 2,
-          }}
-        >
-          <SearchIcon sx={{ fontSize: 60, color: 'text.secondary' }} />
-          <Typography variant="h6" color="text.secondary">
-            No results found for &quot;{searchQuery}&quot;
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Try a different search term
-          </Typography>
-        </Box>
+        <EmptyState
+          icon={<SearchIcon sx={{ fontSize: 60, color: 'text.secondary' }} />}
+          title={`No results found for "${query}"`}
+          subtitle="Try a different search term"
+        />
       ) : (
         <Box
           sx={{
@@ -150,7 +109,7 @@ export function LotteryList({
             gap: 3,
           }}
         >
-          {filteredLotteries.map((lottery) => (
+          {filteredItems.map((lottery) => (
             <LotteryCard
               key={lottery.id}
               lottery={lottery}
