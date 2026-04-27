@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import {
   Casino as CasinoIcon,
   SentimentDissatisfied as SadIcon,
 } from '@mui/icons-material';
 import { LotteryCard } from './LotteryCard';
-import { getLotteries } from '../services/api';
-import type { Lottery } from '../types';
+import { useLotteries } from '../hooks/useLotteries';
 
 interface LotteryListProps {
   selectedIds: string[];
@@ -17,41 +15,7 @@ export function LotteryList({
   selectedIds,
   onSelectionChange,
 }: LotteryListProps) {
-  const [lotteries, setLotteries] = useState<Lottery[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchLotteries = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getLotteries();
-        setLotteries(data);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : 'Failed to load lotteries',
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void fetchLotteries();
-  }, []);
-
-  const handleRefresh = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getLotteries();
-      setLotteries(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load lotteries');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { lotteries, loading, error, refresh } = useLotteries();
 
   const handleToggleSelection = (id: string) => {
     if (selectedIds.includes(id)) {
@@ -126,7 +90,7 @@ export function LotteryList({
               lottery={lottery}
               selected={selectedIds.includes(lottery.id)}
               onSelect={handleToggleSelection}
-              onRefresh={handleRefresh}
+              onRefresh={refresh}
             />
           ))}
         </Box>
