@@ -134,3 +134,6 @@ build-tsc
 build-babel
 
 .idea
+
+# Claude Code
+.claude
