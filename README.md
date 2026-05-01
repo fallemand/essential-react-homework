@@ -2,7 +2,6 @@
 
 While having lunch, your CTO and your Tech Leader met and discussed about a technology that most big companies are using which improves code maintenance and reusability by using components. They ended up agreeing that React could indeed help BigCorp deliver the best lottery website.
 
-
 ### Homework management 🏠
 
 The final result of all homework is the React Native Application full of features implemented iteratively in the end phase of each module in the course. In order to keep consistency and track all of your changes we highly recommend you to create your own GitHub repository where your work as a participant will be stored. Your GitHub repository should be shared with all trainers, which will enable us to verify your work and communicate.
@@ -17,7 +16,6 @@ The goal of this homework is to create a web application in React.
 
 The homework repository contains periodic checkpoints for your convenience. You will see callouts denoting the current checkpoint throughout this instruction. They will look something like this:
 
-
 > 💡 You are now here → `checkpoint-xyz`
 
 Feel free to check out the corresponding branch of any given checkpoint if you’re struggling or simply want to compare your solution with ours.
@@ -26,48 +24,90 @@ With that out of the way, let’s start!
 
 ## Part 1: Project setup
 
-The project is a monorepo with two applications - backend and web. It is hard to set up a monorepo with nested package.json files and it usually requires installing additional tooling and a lot of scripts (and it’s out of scope of this homework exercise) - that’s why we won’t be doing that and we will be splitting our repo without nesting package.json and all the other configuration files.
+This project is a **pnpm monorepo** with three applications (backend, web, mobile) and a shared package for common code. The monorepo structure allows code reuse and consistent tooling across all packages.
+
+### Monorepo Structure
+
+```
+apps/
+  ├── backend/     # Express API server
+  ├── web/         # React web application (Vite)
+  └── mobile/      # React Native mobile app (Expo)
+packages/
+  └── shared/      # Shared types, hooks, and utilities
+```
+
+### Getting Started
+
+1. Install dependencies from the root:
+
+   ```bash
+   pnpm install
+   ```
+
+2. Run individual apps:
+
+   ```bash
+   pnpm dev:backend   # Start backend server
+   pnpm dev:web       # Start web app
+   pnpm dev:mobile    # Start mobile app
+   ```
+
+3. Other useful commands:
+   ```bash
+   pnpm lint          # Lint all packages
+   pnpm format        # Format all packages
+   pnpm typecheck     # Type-check all packages
+   pnpm build:web     # Build web app for production
+   ```
 
 <details>
   <summary><b>Step 1. Create a free Upstash account to store data in Redis database</b></summary><br>
 
 In order to store data about lotteries you need a database. For this homework, you'll use Redis provided by Upstash. It has a generous free plan which should be just enough to cover everything you need. Go to [https://upstash.com](https://upstash.com/) and create a free account. Create a new Redis database - you can use any name you'd like. You'll get redirected to a page where all required secrets are shown.
 
-  After that, create a `.env` file with the contents:
+After that, create a `.env` file in `apps/backend/` with the contents:
 
-  ```
-    REDIS_URL="rediss://db:token@address:6379
-  ```
+```
+  REDIS_URL="rediss://db:token@address:6379
+```
 
-  which you can copy from Upstash directly after creating a free database by pressing the "TCP" badge.
+which you can copy from Upstash directly after creating a free database by pressing the "TCP" badge.
 
-  Now, in order to run the server just run `npm run dev` inside the `backend` directory.
+Now, to run the server, use `pnpm dev:backend` from the root directory.
 
 </details>
 
 <details>
-  <summary><b>Step 2: Create a new React project</b></summary><br>
+  <summary><b>Step 2: React project setup</b></summary><br>
 
-Run the following command in the root of the repository to create a new vite project with React and TypeScript already set-up.
+The React web application is already set up in `apps/web/` using Vite with React and TypeScript. The web app uses the `@lottery/shared` package for shared types, hooks, and utilities.
 
-  ```bash
-    npm create vite web -- --template react-ts
-  ```
+To start the development server:
+
+```bash
+  pnpm dev:web
+```
+
+The app will be available at `http://localhost:5173`
+
 </details>
 
 <details>
-  <summary><b>Step 3: Code formatting for web project</b></summary><br>
+  <summary><b>Step 3: Code formatting and linting</b></summary><br>
 
-Vite template comes with ESLint pre-configured, but it is missing a vital component - code formatter. Luckily, it is really simple to add it:
+ESLint and Prettier are already configured for all packages in the monorepo. The configuration includes:
 
 1.Install necessary dependencies
-  ```bash
-    npm install prettier@2 eslint-plugin-prettier eslint-config-prettier -D
-  ```
+
+```bash
+  npm install prettier@2 eslint-plugin-prettier eslint-config-prettier -D
+```
 
 2.Adjust .eslintrc.cjs configuration
-  ```js
-    /* eslint-env node */
+
+```js
+/* eslint-env node */
 
 module.exports = {
   root: true,
@@ -98,33 +138,37 @@ module.exports = {
     // Add a rule for prettier errors
     'prettier/prettier': 'error',
   },
-}
-  ```
+};
+```
 
 3.Add .prettierrc.cjs to our web project
-  ```js
-    module.exports = {
-  "singleQuote": true,
-  "trailingComma": "all"
-}
-  ```
+
+```js
+module.exports = {
+  singleQuote: true,
+  trailingComma: 'all',
+};
+```
+
 At this point, we should have fully working web and backend projects in the root of our repository.
+
 </details>
 
 <details>
   <summary><b>Step 4: Add MaterialUI</b></summary><br>
 
 To make things simples for feature implementation and focus on React, we will be using MaterialUI library for our frontend components. You can fine installation instructions here -https://mui.com/material-ui/getting-started/installation/.
+
 </details>
 
 <details>
   <summary><b>Step 5: Add .env file in web directory</b></summary><br>
 
-  The frontend needs to know which api server to connect to, so let's create a .env file:
+The frontend needs to know which api server to connect to, so let's create a .env file:
 
-  ```
-  VITE_API_URL=http://localhost:3000
-  ```
+```
+VITE_API_URL=http://localhost:3000
+```
 
 </details>
 
@@ -138,30 +182,35 @@ Given the UI design implement Add a lottery feature.
   <summary><b>Add lottery FAB button</b></summary><br>
 
 ![267631611-6044cdf1-07b9-421b-a6b0-98dc005f2324.png](assets/267631611-6044cdf1-07b9-421b-a6b0-98dc005f2324.png)
+
 </details>
 
 <details>
   <summary><b>Add lottery modal</b></summary><br>
 
 ![267631757-e56f250d-251d-43eb-94e5-ee06fece7ece.png](assets/267631757-e56f250d-251d-43eb-94e5-ee06fece7ece.png)
+
 </details>
 
 <details>
   <summary><b>Add lottery modal form validation</b></summary><br>
 
 ![267631887-783f4ca1-9c3c-411c-8cc7-86736152f283.png](assets/267631887-783f4ca1-9c3c-411c-8cc7-86736152f283.png)
+
 </details>
 
 <details>
   <summary><b>Add lottery loading state</b></summary><br>
 
 ![267632061-cb7ec061-c586-4466-b8ff-f3eccc5519d1.png](assets/267632061-cb7ec061-c586-4466-b8ff-f3eccc5519d1.png)
+
 </details>
 
 <details>
   <summary><b>Notification after successful action</b></summary><br>
 
 ![267632188-bf80c280-46a6-4aff-ac45-98aa3a4dfdd8.png](assets/267632188-bf80c280-46a6-4aff-ac45-98aa3a4dfdd8.png)
+
 </details>
 
 Add lottery feature should have following things implemented:
@@ -191,18 +240,21 @@ Given the UI design implement List lotteries feature.
 ![267632320-3c1eac8e-072a-44e9-8f65-f2a41588fe8e.png](assets/267632320-3c1eac8e-072a-44e9-8f65-f2a41588fe8e.png)
 ![267632361-e306725f-128d-4219-9426-6e09c04c093e.png](assets/267632361-e306725f-128d-4219-9426-6e09c04c093e.png)
 ![267632406-a700006a-ab52-4ba8-9021-d01e68ca8270.png](assets/267632406-a700006a-ab52-4ba8-9021-d01e68ca8270.png)
+
 </details>
 
 <details>
   <summary><b>Make lotteries selectable and add register FAB button</b></summary><br>
 
 ![267632563-ac5fd39a-14be-4b09-8077-136ea66f8ebf.png](assets/267632563-ac5fd39a-14be-4b09-8077-136ea66f8ebf.png)
+
 </details>
 
 <details>
   <summary><b>Add Register modal with name input and validation</b></summary><br>
 
 ![267632627-50988024-0da9-46cf-af93-3b5dc5ebe090.png](assets/267632627-50988024-0da9-46cf-af93-3b5dc5ebe090.png)
+
 </details>
 
 <details>
@@ -232,12 +284,14 @@ Given the UI design implement Filter lotteries feature.
   <summary><b>Add text input to filter fetched lotteries</b></summary><br>
 
 ![267633613-fd7a79fb-bd43-4031-99d7-d8f1ed507095.png](assets/267633613-fd7a79fb-bd43-4031-99d7-d8f1ed507095.png)
+
 </details>
 
 <details>
   <summary><b>Handle no search result case</b></summary><br>
 
 ![267633722-46e6c84b-76f1-4e36-9e79-0963b2f802d9.png](assets/267633722-46e6c84b-76f1-4e36-9e79-0963b2f802d9.png)
+
 </details>
 
 Filter lotteries:
@@ -246,4 +300,4 @@ Filter lotteries:
 - Typing in the input should filter the results
 - When there are no search results for a given filter, no search result information should be displayed
 
-> 💡 You are now here → https://github.com/callstack-workshops/essential-react-homework/tree/part-4-done 
+> 💡 You are now here → https://github.com/callstack-workshops/essential-react-homework/tree/part-4-done

@@ -1,0 +1,30 @@
+{
+  "name": "essential-react-homework",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:web": "pnpm --filter @lottery/web dev",
+    "dev:mobile": "pnpm --filter @lottery/mobile start",
+    "dev:backend": "pnpm --filter @lottery/backend dev",
+    "build:web": "pnpm --filter @lottery/web build",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write .",
+    "typecheck": "tsc -b",
+    "clean": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "eslint": "^9.39.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md,css}": [
+      "prettier --write"
+    ]
+  }
+}
