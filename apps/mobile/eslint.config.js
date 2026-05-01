@@ -1,21 +1,50 @@
-import callstackConfig from '@callstack/eslint-config/react-native.flat.js';
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
-export default [
+export default tseslint.config(
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    ignores: ['node_modules', '.expo', 'assets'],
-  },
-  // Filter out Jest configs since we don't have Jest installed
-  ...callstackConfig.filter((config) => !config.plugins?.jest),
-  {
-    files: ['eslint.config.js', 'prettier.config.js'],
-    rules: {
-      'import/no-extraneous-dependencies': 'off',
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    plugins: {
+      react: reactPlugin,
+      'react-hooks': reactHooksPlugin,
     },
-  },
-  {
-    // React 17+ doesn't require React to be in scope for JSX
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        console: 'readonly',
+        __dirname: 'readonly',
+        process: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+      },
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
     rules: {
+      'react/jsx-uses-react': 'off',
       'react/react-in-jsx-scope': 'off',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
-];
+  {
+    ignores: ['.expo/**', 'node_modules/**'],
+  }
+);

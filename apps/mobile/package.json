@@ -21,10 +21,12 @@
     "react-native": "0.81.5"
   },
   "devDependencies": {
-    "@callstack/eslint-config": "^15.0.0",
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^10.0.1",
     "@types/react": "~19.1.0",
-    "typescript": "~5.9.2"
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.59.1"
   },
   "private": true
 }
