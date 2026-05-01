@@ -1,62 +1,105 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Snackbar, Alert } from '@mui/material';
 import { AddLotteryButton } from './components/AddLotteryButton';
 import { AddLotteryModal } from './components/AddLotteryModal';
-import { createLottery } from './services/api';
+import { RegisterModal } from './components/RegisterModal';
+import { LotteryList } from './components/LotteryList';
+import { RegisterButton } from './components/RegisterButton';
+import { createLottery, registerForLottery } from './services/api';
+import { useModal } from './hooks/useModal';
+import { useNotification } from './hooks/useNotification';
 
 function App() {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const addModal = useModal();
+  const registerModal = useModal();
+  const notification = useNotification();
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-    setError(null);
-  };
+  const [addLoading, setAddLoading] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedLotteryIds, setSelectedLotteryIds] = useState<string[]>([]);
+
+  const refreshLotteries = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
 
   const handleAdd = async (name: string, prize: string) => {
-    setLoading(true);
-    setError(null);
+    setAddLoading(true);
 
     try {
       await createLottery({ name, prize, type: 'simple' });
-      handleClose();
-      setSnackbarOpen(true);
+      addModal.handleClose();
+      notification.showSuccess('New lottery created');
+      refreshLotteries();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create lottery');
-      setSnackbarOpen(true);
+      notification.showError(
+        err instanceof Error ? err.message : 'Failed to create lottery',
+      );
     } finally {
-      setLoading(false);
+      setAddLoading(false);
+    }
+  };
+
+  const handleRegisterSubmit = async (name: string) => {
+    setRegisterLoading(true);
+
+    try {
+      await Promise.all(
+        selectedLotteryIds.map((lotteryId) =>
+          registerForLottery(lotteryId, name),
+        ),
+      );
+
+      registerModal.handleClose();
+      setSelectedLotteryIds([]);
+      notification.showSuccess(
+        `Successfully registered for ${selectedLotteryIds.length} ${selectedLotteryIds.length === 1 ? 'lottery' : 'lotteries'}`,
+      );
+    } catch (err) {
+      notification.showError(
+        err instanceof Error ? err.message : 'Failed to register for lottery',
+      );
+    } finally {
+      setRegisterLoading(false);
     }
   };
 
   return (
     <>
-      <AddLotteryButton onClick={handleOpen} />
+      <LotteryList
+        key={refreshKey}
+        selectedIds={selectedLotteryIds}
+        onSelectionChange={setSelectedLotteryIds}
+      />
+      <RegisterButton
+        onClick={registerModal.handleOpen}
+        disabled={selectedLotteryIds.length === 0}
+      />
+      <AddLotteryButton onClick={addModal.handleOpen} />
       <AddLotteryModal
-        open={open}
-        onClose={handleClose}
+        open={addModal.open}
+        onClose={addModal.handleClose}
         onAdd={handleAdd}
-        loading={loading}
+        loading={addLoading}
+      />
+      <RegisterModal
+        open={registerModal.open}
+        onClose={registerModal.handleClose}
+        onRegister={handleRegisterSubmit}
+        loading={registerLoading}
       />
       <Snackbar
-        open={snackbarOpen}
+        open={notification.notification.open}
         autoHideDuration={3000}
-        onClose={handleSnackbarClose}
+        onClose={notification.handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        {error ? (
-          <Alert onClose={handleSnackbarClose} severity="error">
-            {error}
-          </Alert>
-        ) : (
-          <Alert onClose={handleSnackbarClose} severity="success">
-            New lottery created
-          </Alert>
-        )}
+        <Alert
+          onClose={notification.handleClose}
+          severity={notification.notification.severity}
+        >
+          {notification.notification.message}
+        </Alert>
       </Snackbar>
     </>
   );
