@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-# Run lint-staged for mobile directory
-cd mobile && npx lint-staged
+# Run lint-staged for all changed files in the monorepo
+npx lint-staged
