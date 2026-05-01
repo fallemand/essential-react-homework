@@ -11,11 +11,13 @@
     "lint": "pnpm -r lint",
     "format": "prettier --write .",
     "typecheck": "tsc -b",
+    "quality": "pnpm typecheck && pnpm lint && pnpm format",
     "clean": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
     "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "9.0.0",
     "eslint": "9.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
@@ -23,7 +25,11 @@
     "typescript": "^5.9.2"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,md,css}": [
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
       "prettier --write"
     ]
   }
