@@ -1,4 +1,4 @@
-import type { Lottery, CreateLotteryRequest } from '../types/index.js';
+import type { Lottery, CreateLotteryRequest } from '../types/index';
 
 interface ErrorResponse {
   error: string;
@@ -12,6 +12,14 @@ export function setApiUrl(url: string) {
 
 export function getApiUrl(): string {
   return apiUrl;
+}
+
+export function initializeApiUrl(url: string | undefined) {
+  if (!url) {
+    throw new Error('API URL is not defined');
+  }
+  console.log('Setting API URL to:', url);
+  setApiUrl(url);
 }
 
 export async function createLottery(
@@ -34,14 +42,23 @@ export async function createLottery(
 }
 
 export async function getLotteries(): Promise<Lottery[]> {
-  const response = await fetch(`${apiUrl}/lotteries`);
+  console.log('Fetching lotteries from:', apiUrl);
+  try {
+    const response = await fetch(`${apiUrl}/lotteries`);
+    console.log('Response status:', response.status);
 
-  if (!response.ok) {
-    const error = (await response.json()) as ErrorResponse;
-    throw new Error(error.error || 'Failed to fetch lotteries');
+    if (!response.ok) {
+      const error = (await response.json()) as ErrorResponse;
+      throw new Error(error.error || 'Failed to fetch lotteries');
+    }
+
+    const data = (await response.json()) as Lottery[];
+    console.log('Lotteries fetched:', data.length);
+    return data;
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
   }
-
-  return (await response.json()) as Lottery[];
 }
 
 export async function registerForLottery(

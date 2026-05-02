@@ -8,14 +8,11 @@
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "strict": true,
-    "composite": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "outDir": "./dist",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
   },
   "include": ["src"]
 }
