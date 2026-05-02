@@ -12,6 +12,9 @@ interface LotteriesListProps {
   lotteries: Lottery[];
   loading: boolean;
   searchQuery: string;
+  selectedIds?: Set<string>;
+  registeredIds?: Set<string>;
+  onLotteryPress?: (id: string) => void;
   onRefresh?: () => void;
 }
 
@@ -19,6 +22,9 @@ export function LotteriesList({
   lotteries,
   loading,
   searchQuery,
+  selectedIds,
+  registeredIds,
+  onLotteryPress,
   onRefresh,
 }: LotteriesListProps) {
   const hasLotteries = lotteries.length > 0;
@@ -55,7 +61,13 @@ export function LotteriesList({
       data={lotteries}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
-        <LotteryCard lottery={item} onRefresh={onRefresh} />
+        <LotteryCard
+          lottery={item}
+          isSelected={selectedIds?.has(item.id)}
+          isRegistered={registeredIds?.has(item.id)}
+          onPress={() => onLotteryPress?.(item.id)}
+          onRefresh={onRefresh}
+        />
       )}
       contentContainerStyle={styles.list}
     />
