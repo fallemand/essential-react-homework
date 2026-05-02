@@ -1,4 +1,4 @@
-import type { Lottery, CreateLotteryRequest } from '../types/index.js';
+import type { Lottery, CreateLotteryRequest } from '../types/index';
 
 interface ErrorResponse {
   error: string;
@@ -12,6 +12,13 @@ export function setApiUrl(url: string) {
 
 export function getApiUrl(): string {
   return apiUrl;
+}
+
+export function initializeApiUrl(url: string | undefined) {
+  if (!url) {
+    throw new Error('API URL is not defined');
+  }
+  setApiUrl(url);
 }
 
 export async function createLottery(

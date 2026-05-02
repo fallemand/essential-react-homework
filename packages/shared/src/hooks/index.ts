@@ -1,2 +1,2 @@
-export { useSearch } from './useSearch.js';
-export { useLotteries } from './useLotteries.js';
+export { useSearch } from './useSearch.ts';
+export { useLotteries } from './useLotteries.ts';

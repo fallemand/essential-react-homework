@@ -4,4 +4,5 @@ export {
   registerForLottery,
   setApiUrl,
   getApiUrl,
-} from './api.js';
+  initializeApiUrl,
+} from './api.ts';

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getLotteries } from '../utils/api.js';
-import type { Lottery } from '../types/index.js';
+import { getLotteries } from '../utils/api';
+import type { Lottery } from '../types/index';
 
 export function useLotteries() {
   const [lotteries, setLotteries] = useState<Lottery[]>([]);
