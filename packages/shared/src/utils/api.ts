@@ -18,7 +18,6 @@ export function initializeApiUrl(url: string | undefined) {
   if (!url) {
     throw new Error('API URL is not defined');
   }
-  console.log('Setting API URL to:', url);
   setApiUrl(url);
 }
 
@@ -42,23 +41,14 @@ export async function createLottery(
 }
 
 export async function getLotteries(): Promise<Lottery[]> {
-  console.log('Fetching lotteries from:', apiUrl);
-  try {
-    const response = await fetch(`${apiUrl}/lotteries`);
-    console.log('Response status:', response.status);
+  const response = await fetch(`${apiUrl}/lotteries`);
 
-    if (!response.ok) {
-      const error = (await response.json()) as ErrorResponse;
-      throw new Error(error.error || 'Failed to fetch lotteries');
-    }
-
-    const data = (await response.json()) as Lottery[];
-    console.log('Lotteries fetched:', data.length);
-    return data;
-  } catch (error) {
-    console.error('Fetch error:', error);
-    throw error;
+  if (!response.ok) {
+    const error = (await response.json()) as ErrorResponse;
+    throw new Error(error.error || 'Failed to fetch lotteries');
   }
+
+  return (await response.json()) as Lottery[];
 }
 
 export async function registerForLottery(
