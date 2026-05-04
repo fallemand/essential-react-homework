@@ -1,30 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = 'registered_lotteries';
-
-let AsyncStorage: any = null;
-
-try {
-  AsyncStorage = require('@react-native-async-storage/async-storage').default;
-} catch (error) {
-  console.warn('AsyncStorage not available:', error);
-}
 
 export function useRegisteredLotteries() {
   const [registeredIds, setRegisteredIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (AsyncStorage) {
-      loadRegisteredLotteries();
-    }
+    loadRegisteredLotteries();
   }, []);
 
   const loadRegisteredLotteries = async () => {
-    if (!AsyncStorage) {
-      setLoading(false);
-      return;
-    }
     try {
       setLoading(true);
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
@@ -40,7 +27,6 @@ export function useRegisteredLotteries() {
   };
 
   const saveRegisteredLotteries = async (ids: Set<string>) => {
-    if (!AsyncStorage) return;
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(ids)));
     } catch (error) {
