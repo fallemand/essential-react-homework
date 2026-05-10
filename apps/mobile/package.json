@@ -11,7 +11,10 @@
     "tsc": "tsc",
     "test": "jest",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "e2e": "maestro test .maestro/",
+    "e2e:home": "maestro test .maestro/home.yaml",
+    "e2e:add-lottery": "maestro test .maestro/add-lottery.yaml"
   },
   "dependencies": {
     "@lottery/shared": "workspace:*",
