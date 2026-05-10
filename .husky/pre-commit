@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-# Run lint-staged for all changed files in the monorepo
+npx syncpack lint
 npx lint-staged

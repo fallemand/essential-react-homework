@@ -11,17 +11,19 @@
     "lint": "pnpm -r lint",
     "format": "prettier --write .",
     "typecheck": "tsc -b",
-    "quality": "pnpm typecheck && pnpm lint && pnpm format",
+    "syncpack": "syncpack lint",
+    "quality": "pnpm syncpack && pnpm typecheck && pnpm lint && pnpm format",
     "clean": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
     "prepare": "husky"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "9.0.0",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
     "eslint": "9.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
+    "syncpack": "^15.0.0",
     "typescript": "^5.9.2"
   },
   "lint-staged": {

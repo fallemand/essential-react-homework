@@ -1,0 +1,37 @@
+/** @type {import("syncpack").RcFile} */
+module.exports = {
+  versionGroups: [
+    {
+      label: "Use workspace protocol for internal packages",
+      dependencies: ["@lottery/*"],
+      dependencyTypes: ["!peer"],
+      pinVersion: "workspace:*",
+    },
+    {
+      label: "Ignore peer dependency ranges",
+      dependencyTypes: ["peer"],
+      isIgnored: true,
+    },
+    {
+      label: "TypeScript can differ between Expo and web apps",
+      dependencies: ["typescript"],
+      isIgnored: true,
+    },
+    {
+      label: "@types/node can differ between backend and web",
+      dependencies: ["@types/node"],
+      isIgnored: true,
+    },
+    {
+      label: "React pinned to 19.1.0 for Expo SDK 54 compatibility",
+      dependencies: ["react", "react-dom"],
+      dependencyTypes: ["!peer"],
+      pinVersion: "19.1.0",
+    },
+    {
+      label: "@types/react pinned for Expo SDK 54 compatibility",
+      dependencies: ["@types/react"],
+      pinVersion: "~19.1.0",
+    },
+  ],
+};
