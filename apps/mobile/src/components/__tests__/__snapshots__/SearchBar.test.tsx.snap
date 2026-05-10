@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchBar matches snapshot 1`] = `
+<View
+  style={
+    {
+      "marginBottom": 16,
+      "marginHorizontal": 16,
+      "position": "relative",
+    }
+  }
+>
+  <TextInput
+    onChangeText={[Function]}
+    placeholder="Filter lotteries"
+    placeholderTextColor="#999"
+    style={
+      {
+        "borderColor": "#ddd",
+        "borderRadius": 8,
+        "borderWidth": 1,
+        "fontSize": 16,
+        "padding": 12,
+        "paddingRight": 40,
+      }
+    }
+    value=""
+  />
+  <Text
+    style={
+      {
+        "fontSize": 20,
+        "position": "absolute",
+        "right": 12,
+        "top": 12,
+      }
+    }
+  >
+    🔍
+  </Text>
+</View>
+`;

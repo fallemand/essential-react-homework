@@ -9,6 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "tsc": "tsc",
+    "test": "jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -29,7 +30,11 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@lottery/testing": "workspace:*",
+    "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.1.0",
+    "jest-expo": "^55.0.17",
+    "react-test-renderer": "19.1.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "typescript": "~5.9.2",
