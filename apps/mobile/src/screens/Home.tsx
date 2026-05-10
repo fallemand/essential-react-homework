@@ -1,19 +1,48 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useCallback } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
+import { useLotteries, useSearch } from '@lottery/shared/hooks';
+import type { Lottery } from '@lottery/shared/types';
 import { RootStackParamList } from '../../App';
+import { SearchBar } from '../components/SearchBar';
+import { LotteriesList } from '../components/LotteriesList';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function Home({ navigation }: HomeProps) {
+  const { lotteries, loading, error, refresh } = useLotteries();
+
+  const filterLottery = useCallback((lottery: Lottery, query: string) => {
+    const q = query.toLowerCase();
+    return lottery.name.toLowerCase().includes(q);
+  }, []);
+
+  const { query, setQuery, filteredItems } = useSearch({
+    items: lotteries,
+    filterFn: filterLottery,
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Lotteries 🎰</Text>
       </View>
 
-      <View style={styles.centerContent}>
-        <Text style={styles.emptyTitle}>There are no lotteries currently</Text>
-      </View>
+      <SearchBar value={query} onChangeText={setQuery} />
+
+      <LotteriesList
+        lotteries={filteredItems}
+        loading={loading}
+        searchQuery={query}
+        onRefresh={refresh}
+      />
 
       <TouchableOpacity
         style={styles.fab}
@@ -38,16 +67,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
   },
-  centerContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyTitle: {
-    fontSize: 18,
-    color: '#666',
-    textAlign: 'center',
-  },
   fab: {
     position: 'absolute',
     right: 16,
@@ -55,7 +74,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#1976d2',
+    backgroundColor: '#e91e63',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
