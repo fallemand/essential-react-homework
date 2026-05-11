@@ -12,9 +12,7 @@
     "test": "jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "e2e": "maestro test .maestro/",
-    "e2e:home": "maestro test .maestro/home.yaml",
-    "e2e:add-lottery": "maestro test .maestro/add-lottery.yaml"
+    "e2e": "maestro test .maestro/"
   },
   "dependencies": {
     "@lottery/shared": "workspace:*",
