@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SearchBar matches snapshot 1`] = `
+exports[`SearchBar matches snapshot with value 1`] = `
 <View
   style={
     {
@@ -24,7 +24,7 @@ exports[`SearchBar matches snapshot 1`] = `
         "paddingRight": 40,
       }
     }
-    value=""
+    value="mega"
   />
   <Text
     style={
