@@ -2,8 +2,7 @@ appId: host.exp.exponent
 ---
 - launchApp
 - tapOn: "mobile"
-- tapOn:
-    id: "fab-add"
+- tapOn: "+"
 - assertVisible: "Add a new lottery"
 - tapOn: "Enter lottery name"
 - inputText: "My Test Lottery"

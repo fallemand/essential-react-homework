@@ -109,7 +109,6 @@ export default function Home({ navigation }: HomeProps) {
       )}
 
       <TouchableOpacity
-        testID="fab-add"
         style={styles.fab}
         onPress={() => navigation.navigate('AddLottery')}
       >
