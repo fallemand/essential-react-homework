@@ -1,0 +1,12 @@
+appId: host.exp.exponent
+---
+- launchApp
+- tapOn: "mobile"
+- tapOn: "+"
+- assertVisible: "Add a new lottery"
+- tapOn: "Enter lottery name"
+- inputText: "My Test Lottery"
+- tapOn: "Enter lottery prize"
+- inputText: "Grand Prize $1000"
+- assertVisible: "ADD"
+- tapOn: "ADD"

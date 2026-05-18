@@ -11,7 +11,8 @@
     "tsc": "tsc",
     "test": "jest",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "e2e": "maestro test .maestro/"
   },
   "dependencies": {
     "@lottery/shared": "workspace:*",

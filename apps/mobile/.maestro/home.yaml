@@ -1,0 +1,6 @@
+appId: host.exp.exponent
+---
+- launchApp
+- tapOn: "mobile"
+- assertVisible: "Lotteries 🎰"
+- assertVisible: "Filter lotteries"
