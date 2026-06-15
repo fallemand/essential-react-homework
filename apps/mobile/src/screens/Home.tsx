@@ -10,7 +10,9 @@ import { RootStackParamList } from '../../App';
 import { SearchBar } from '../components/SearchBar';
 import { LotteriesList } from '../components/LotteriesList';
 import { RegisterModal } from '../components/RegisterModal';
+import { AnimatedHeader } from '../components/AnimatedHeader';
 import { useRegisteredLotteries } from '../hooks/useRegisteredLotteries';
+import { useAnimatedHeader } from '../hooks/useAnimatedHeader';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -20,6 +22,7 @@ export default function Home({ navigation }: HomeProps) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [modalVisible, setModalVisible] = useState(false);
   const isFirstFocus = useRef(true);
+  const header = useAnimatedHeader({ maxHeight: 80, minHeight: 32 });
 
   const toggleSelection = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -81,9 +84,13 @@ export default function Home({ navigation }: HomeProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Lotteries 🎰</Text>
-      </View>
+      <AnimatedHeader
+        height={header.height}
+        opacity={header.opacity}
+        scale={header.scale}
+      >
+        Lotteries 🎰
+      </AnimatedHeader>
 
       <SearchBar value={query} onChangeText={setQuery} />
 
@@ -95,6 +102,7 @@ export default function Home({ navigation }: HomeProps) {
         registeredIds={registeredIds}
         onLotteryPress={toggleSelection}
         onRefresh={refresh}
+        onScroll={header.onScroll}
       />
 
       {selectedIds.size > 0 && (
@@ -129,14 +137,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  header: {
-    padding: 16,
-    paddingTop: 24,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
   },
   registerButton: {
     position: 'absolute',

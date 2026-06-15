@@ -4,6 +4,8 @@ import {
   View,
   FlatList,
   ActivityIndicator,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
 } from 'react-native';
 import type { Lottery } from '@lottery/shared/types';
 import { LotteryCard } from './LotteryCard';
@@ -16,6 +18,7 @@ interface LotteriesListProps {
   registeredIds?: Set<string>;
   onLotteryPress?: (id: string) => void;
   onRefresh?: () => void;
+  onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 export function LotteriesList({
@@ -26,6 +29,7 @@ export function LotteriesList({
   registeredIds,
   onLotteryPress,
   onRefresh,
+  onScroll,
 }: LotteriesListProps) {
   const hasLotteries = lotteries.length > 0;
   const isSearching = searchQuery.length > 0;
@@ -70,6 +74,8 @@ export function LotteriesList({
         />
       )}
       contentContainerStyle={styles.list}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
     />
   );
 }
