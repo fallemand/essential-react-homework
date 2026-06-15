@@ -10,6 +10,8 @@ import { useRoute } from '@react-navigation/native';
 import { useLotteryDetails } from '@lottery/shared/hooks';
 import type { Lottery } from '@lottery/shared/types';
 import type { LotteryDetailsRouteProp } from '../../App';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { LotteryDetailsError } from '../components/LotteryDetailsError';
 
 /* ----- DATA PROVIDER ----- */
 
@@ -22,7 +24,7 @@ const LotteryDetailsDataProvider = ({
   children,
   lotteryId,
 }: LotteryDetailsDataProviderProps) => {
-  const { lottery, loading } = useLotteryDetails(lotteryId);
+  const { lottery, loading, error } = useLotteryDetails(lotteryId);
 
   if (loading) {
     return (
@@ -31,7 +33,10 @@ const LotteryDetailsDataProvider = ({
       </View>
     );
   }
-  return lottery ? children(lottery) : null;
+  if (error || !lottery) {
+    throw new Error(error ?? 'Lottery not found');
+  }
+  return children(lottery);
 };
 
 /* ----- VIEW ----- */
@@ -79,13 +84,17 @@ const LotteryDetailsView = ({ lottery }: LotteryDetailsViewProps) => {
 
 /* ----- SCREEN ----- */
 
+const fallback = <LotteryDetailsError />;
+
 export const LotteryDetails = () => {
   const route = useRoute<LotteryDetailsRouteProp>();
 
   return (
-    <LotteryDetailsDataProvider lotteryId={route.params.id}>
-      {(lotteryDetails) => <LotteryDetailsView lottery={lotteryDetails} />}
-    </LotteryDetailsDataProvider>
+    <ErrorBoundary fallback={fallback}>
+      <LotteryDetailsDataProvider lotteryId={route.params.id}>
+        {(lotteryDetails) => <LotteryDetailsView lottery={lotteryDetails} />}
+      </LotteryDetailsDataProvider>
+    </ErrorBoundary>
   );
 };
 
