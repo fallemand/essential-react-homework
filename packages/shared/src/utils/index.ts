@@ -1,6 +1,7 @@
 export {
   createLottery,
   getLotteries,
+  getLotteryById,
   registerForLottery,
   setApiUrl,
   getApiUrl,

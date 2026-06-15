@@ -6,7 +6,7 @@ import Toast from 'react-native-toast-message';
 import { useLotteries, useSearch } from '@lottery/shared/hooks';
 import { registerForLottery } from '@lottery/shared/utils';
 import type { Lottery } from '@lottery/shared/types';
-import { RootStackParamList } from '../../App';
+import { Routes, RootStackParamList } from '../../App';
 import { SearchBar } from '../components/SearchBar';
 import { LotteriesList } from '../components/LotteriesList';
 import { RegisterModal } from '../components/RegisterModal';
@@ -14,7 +14,7 @@ import { AnimatedHeader } from '../components/AnimatedHeader';
 import { useRegisteredLotteries } from '../hooks/useRegisteredLotteries';
 import { useAnimatedHeader } from '../hooks/useAnimatedHeader';
 
-type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
+type HomeProps = NativeStackScreenProps<RootStackParamList, typeof Routes.Home>;
 
 export default function Home({ navigation }: HomeProps) {
   const { lotteries, loading, refresh } = useLotteries();
@@ -118,7 +118,7 @@ export default function Home({ navigation }: HomeProps) {
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('AddLottery')}
+        onPress={() => navigation.navigate(Routes.AddLottery)}
       >
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
