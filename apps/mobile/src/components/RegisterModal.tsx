@@ -5,9 +5,9 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
 import { useState } from 'react';
+import CustomButton from '../../specs/CustomButtonNativeComponent';
 
 interface RegisterModalProps {
   visible: boolean;
@@ -70,21 +70,12 @@ export function RegisterModal({
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[
-                styles.button,
-                styles.registerButton,
-                (!name.trim() || loading) && styles.disabledButton,
-              ]}
-              onPress={handleRegister}
+            <CustomButton
+              text="Register"
               disabled={!name.trim() || loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.registerButtonText}>Register</Text>
-              )}
-            </TouchableOpacity>
+              onCustomButtonPress={handleRegister}
+              style={styles.customButton}
+            />
           </View>
         </View>
       </View>
@@ -142,15 +133,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  registerButton: {
-    backgroundColor: '#e91e63',
-  },
-  registerButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  disabledButton: {
-    opacity: 0.5,
+  customButton: {
+    width: 120,
+    height: 44,
   },
 });

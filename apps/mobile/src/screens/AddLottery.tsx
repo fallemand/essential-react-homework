@@ -3,11 +3,9 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ActivityIndicator,
 } from 'react-native';
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -15,6 +13,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
 import { createLottery } from '@lottery/shared/utils';
 import { Routes, RootStackParamList } from '../../App';
+import NativeNotification from '../../specs/NativeNotification';
+import CustomButton from '../../specs/CustomButtonNativeComponent';
 
 type AddLotteryProps = NativeStackScreenProps<
   RootStackParamList,
@@ -54,6 +54,11 @@ export default function AddLottery({ navigation }: AddLotteryProps) {
 
       reset();
       navigation.goBack();
+
+      NativeNotification.showNotification(
+        'Lottery Created',
+        'Your new lottery has been added successfully!'
+      );
 
       Toast.show({
         type: 'success',
@@ -138,20 +143,12 @@ export default function AddLottery({ navigation }: AddLotteryProps) {
             )}
           </View>
 
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (!isValid || loading) && styles.buttonDisabled,
-            ]}
-            onPress={handleSubmit(onSubmit)}
+          <CustomButton
+            text="ADD"
             disabled={!isValid || loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>ADD</Text>
-            )}
-          </TouchableOpacity>
+            onCustomButtonPress={() => handleSubmit(onSubmit)()}
+            style={styles.customButton}
+          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -198,20 +195,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  button: {
-    backgroundColor: '#1976d2',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 4,
+  customButton: {
+    width: 120,
+    height: 44,
     marginTop: 24,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    alignSelf: 'center',
   },
 });
