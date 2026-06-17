@@ -11,6 +11,7 @@ import com.lottery.mobile.NativeNotificationSpec
 class NotificationModule(reactContext: ReactApplicationContext) : NativeNotificationSpec(reactContext) {
 
     companion object {
+        const val NAME = NativeNotificationSpec.NAME
         private const val CHANNEL_ID = "default_channel"
         private const val CHANNEL_NAME = "Default"
     }
