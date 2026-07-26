@@ -1,5 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import type { Lottery } from '@lottery/shared/types';
+import { Routes, type LotteryDetailsNavigationProp } from '../../App';
 
 interface LotteryCardProps {
   lottery: Lottery;
@@ -16,7 +18,13 @@ export function LotteryCard({
   onPress,
   onRefresh,
 }: LotteryCardProps) {
-  const handlePress = () => {
+  const navigation = useNavigation<LotteryDetailsNavigationProp>();
+
+  const handleCardPress = () => {
+    navigation.navigate(Routes.LotteryDetails, { id: lottery.id });
+  };
+
+  const handleCheckboxPress = () => {
     if (!isRegistered && onPress) {
       onPress();
     }
@@ -29,9 +37,8 @@ export function LotteryCard({
         isSelected && styles.selectedCard,
         isRegistered && styles.registeredCard,
       ]}
-      onPress={handlePress}
-      disabled={isRegistered}
-      activeOpacity={isRegistered ? 1 : 0.7}
+      onPress={handleCardPress}
+      activeOpacity={0.7}
     >
       <View style={styles.content}>
         <Text style={[styles.title, isRegistered && styles.registeredText]}>
@@ -44,10 +51,20 @@ export function LotteryCard({
           {lottery.id}
         </Text>
       </View>
-      {isRegistered && (
+      {isRegistered ? (
         <View style={styles.badge}>
           <Text style={styles.badgeText}>Registered</Text>
         </View>
+      ) : (
+        <TouchableOpacity
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: !!isSelected }}
+          style={[styles.checkbox, isSelected && styles.checkboxChecked]}
+          onPress={handleCheckboxPress}
+          hitSlop={8}
+        >
+          {isSelected && <Text style={styles.checkboxMark}>✓</Text>}
+        </TouchableOpacity>
       )}
       {!isRegistered && onRefresh && (
         <TouchableOpacity style={styles.refreshButton} onPress={onRefresh}>
@@ -121,5 +138,25 @@ const styles = StyleSheet.create({
   },
   refreshIcon: {
     fontSize: 24,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#bbb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  checkboxChecked: {
+    borderColor: '#e91e63',
+    backgroundColor: '#e91e63',
+  },
+  checkboxMark: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+    lineHeight: 16,
   },
 });

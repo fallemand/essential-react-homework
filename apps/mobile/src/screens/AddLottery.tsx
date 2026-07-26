@@ -14,9 +14,12 @@ import { useForm, Controller } from 'react-hook-form';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Toast from 'react-native-toast-message';
 import { createLottery } from '@lottery/shared/utils';
-import { RootStackParamList } from '../../App';
+import { Routes, RootStackParamList } from '../../App';
 
-type AddLotteryProps = NativeStackScreenProps<RootStackParamList, 'AddLottery'>;
+type AddLotteryProps = NativeStackScreenProps<
+  RootStackParamList,
+  typeof Routes.AddLottery
+>;
 
 type FormData = {
   name: string;

@@ -51,6 +51,17 @@ export async function getLotteries(): Promise<Lottery[]> {
   return (await response.json()) as Lottery[];
 }
 
+export async function getLotteryById(lotteryId: string): Promise<Lottery> {
+  const response = await fetch(`${apiUrl}/lottery/${lotteryId}`);
+
+  if (!response.ok) {
+    const error = (await response.json()) as ErrorResponse;
+    throw new Error(error.error || 'Failed to fetch lottery');
+  }
+
+  return (await response.json()) as Lottery;
+}
+
 export async function registerForLottery(
   lotteryId: string,
   name: string
