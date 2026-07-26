@@ -7,8 +7,13 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
+import { useMemo } from 'react';
 import type { Lottery } from '@lottery/shared/types';
 import { LotteryCard } from './LotteryCard';
+import {
+  LotteryListSortingOptions,
+  useLotteriesSortingContext,
+} from '../contexts/LotteriesSortingContext';
 
 interface LotteriesListProps {
   lotteries: Lottery[];
@@ -31,7 +36,19 @@ export function LotteriesList({
   onRefresh,
   onScroll,
 }: LotteriesListProps) {
-  const hasLotteries = lotteries.length > 0;
+  const { selectedSorting } = useLotteriesSortingContext();
+
+  const sortedLotteries = useMemo(
+    () =>
+      [...lotteries].sort((a, b) =>
+        selectedSorting === LotteryListSortingOptions.Ascending
+          ? Number(a.prize) - Number(b.prize)
+          : Number(b.prize) - Number(a.prize)
+      ),
+    [lotteries, selectedSorting]
+  );
+
+  const hasLotteries = sortedLotteries.length > 0;
   const isSearching = searchQuery.length > 0;
 
   if (loading) {
@@ -62,7 +79,7 @@ export function LotteriesList({
 
   return (
     <FlatList
-      data={lotteries}
+      data={sortedLotteries}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <LotteryCard

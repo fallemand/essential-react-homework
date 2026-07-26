@@ -10,9 +10,10 @@ import { Routes, RootStackParamList } from '../../App';
 import { SearchBar } from '../components/SearchBar';
 import { LotteriesList } from '../components/LotteriesList';
 import { RegisterModal } from '../components/RegisterModal';
-import { AnimatedHeader } from '../components/AnimatedHeader';
+import { HomeHeader } from '../components/HomeHeader';
 import { useRegisteredLotteries } from '../hooks/useRegisteredLotteries';
 import { useAnimatedHeader } from '../hooks/useAnimatedHeader';
+import { LotteriesSortingContextProvider } from '../contexts/LotteriesSortingContext';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, typeof Routes.Home>;
 
@@ -83,53 +84,53 @@ export default function Home({ navigation }: HomeProps) {
   );
 
   return (
-    <View style={styles.container}>
-      <AnimatedHeader
-        height={header.height}
-        opacity={header.opacity}
-        scale={header.scale}
-      >
-        Lotteries 🎰
-      </AnimatedHeader>
+    <LotteriesSortingContextProvider>
+      <View style={styles.container}>
+        <HomeHeader
+          height={header.height}
+          opacity={header.opacity}
+          scale={header.scale}
+        />
 
-      <SearchBar value={query} onChangeText={setQuery} />
+        <SearchBar value={query} onChangeText={setQuery} />
 
-      <LotteriesList
-        lotteries={filteredItems}
-        loading={loading}
-        searchQuery={query}
-        selectedIds={selectedIds}
-        registeredIds={registeredIds}
-        onLotteryPress={toggleSelection}
-        onRefresh={refresh}
-        onScroll={header.onScroll}
-      />
+        <LotteriesList
+          lotteries={filteredItems}
+          loading={loading}
+          searchQuery={query}
+          selectedIds={selectedIds}
+          registeredIds={registeredIds}
+          onLotteryPress={toggleSelection}
+          onRefresh={refresh}
+          onScroll={header.onScroll}
+        />
 
-      {selectedIds.size > 0 && (
+        {selectedIds.size > 0 && (
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.registerButtonText}>
+              Register ({selectedIds.size})
+            </Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
-          style={styles.registerButton}
-          onPress={() => setModalVisible(true)}
+          style={styles.fab}
+          onPress={() => navigation.navigate(Routes.AddLottery)}
         >
-          <Text style={styles.registerButtonText}>
-            Register ({selectedIds.size})
-          </Text>
+          <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
-      )}
 
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate(Routes.AddLottery)}
-      >
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
-
-      <RegisterModal
-        visible={modalVisible}
-        selectedCount={selectedIds.size}
-        onClose={() => setModalVisible(false)}
-        onRegister={handleRegister}
-      />
-    </View>
+        <RegisterModal
+          visible={modalVisible}
+          selectedCount={selectedIds.size}
+          onClose={() => setModalVisible(false)}
+          onRegister={handleRegister}
+        />
+      </View>
+    </LotteriesSortingContextProvider>
   );
 }
 
